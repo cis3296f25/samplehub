@@ -1,28 +1,35 @@
-# Project Name
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+# SampleHub
+A web application for finding new loops and samples.
 
-![This is a screenshot.](images.png)
-# How to run
-Provide here instructions on how to use your application.   
-- Download the latest binary from the Release section on the right on GitHub.  
-- On the command line uncompress using
+# How to install
+Clone this repository and install the dependencies:
+```bash
+git clone https://github.com/cis3296f25/samplehub.git
+cd frontend
+npm install
 ```
-tar -xzf  
+Or using yarn
+```bash
+yarn install
 ```
-- On the command line run with
-```
-./hello
-```
-- You will see Hello World! on your terminal. 
 
 # How to contribute
-Follow this project board to know the latest status of the project: [http://...]([http://...])  
+Follow this project board to know the latest status of the project: [SampleHub](https://github.com/orgs/cis3296f25/projects/58/views/1)  
 
 ### How to build
-- Use this github repository: ... 
-- Specify what branch to use for a more stable release or for cutting edge development.  
-- Use InteliJ 11
-- Specify additional library to download if needed 
-- What file and target to compile and run. 
-- What is expected to happen when the app start. 
+For the stable release, use the main branch.
+
+For the cutting-edge development version, use the dev branch.
+```bash
+npm run build
+```
+
+Start the development server:
+```bash
+npm run dev
+```
+
+Then open your browser and visit:
+```bash
+http://localhost:5173
+```
