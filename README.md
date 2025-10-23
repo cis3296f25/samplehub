@@ -21,12 +21,15 @@ For the stable release, use the main branch.
 
 # Connect API
 Follow this website to create an API key for your own: [https://freesound.org/apiv2/apply/]
+
 And inside samplehub folder find .env for your environment variables
 
 ```bash
 FREESOUND_API_KEY=your_API_KEY_HERE
 ```
+
 Replace your_API_KEY_HERE with the key that you generate
+
 
 For the cutting-edge development version, use the dev branch.
 ```bash
