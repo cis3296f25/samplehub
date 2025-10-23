@@ -30,7 +30,7 @@ FREESOUND_API_KEY=your_API_KEY_HERE
 
 Replace your_API_KEY_HERE with the key that you generate
 
-
+--
 For the cutting-edge development version, use the dev branch.
 ```bash
 npm run build
