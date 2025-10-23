@@ -1,0 +1,22 @@
+{
+  "name": "samplehub",
+  "version": "1.0.0",
+  "description": "A web application for finding and uploading audio samples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cis3296f25/samplehub.git"
+  },
+  "author": "Joey Huang, Shiven Patel, Arwin Johnson, Josh Green",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cis3296f25/samplehub/issues"
+  },
+  "homepage": "https://github.com/cis3296f25/samplehub#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
