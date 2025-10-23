@@ -19,7 +19,7 @@ Follow this project board to know the latest status of the project: [SampleHub](
 ### How to build
 For the stable release, use the main branch.
 
-#Connect API
+# Connect API
 Follow this website to create an API key for your own: [https://freesound.org/apiv2/apply/]
 And inside samplehub folder find .env for your environment variables
 
