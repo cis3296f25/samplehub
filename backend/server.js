@@ -1,27 +1,18 @@
 import express from "express";
-import pool from "./src/db.js";
-
-const app = express();
-app.use(express.json());
+import userRoutes from "./routes/user";
 
 const port = 5173;
 
-app.get("/", (req, res) => {
-  res.send("Argh!");
+const app = express();
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
 });
 
-app.post("/api/users", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const result = await pool.query(
-      "INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING *",
-      [email, password],
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.use("/api/user/", userRoutes);
 
 app.listen(port, () => {
   console.log("Server is listening");
