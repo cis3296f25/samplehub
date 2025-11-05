@@ -1,5 +1,9 @@
 import express from "express";
-import { loginUser, signupUser } from "../controllers/userController.js";
+import {
+  loginUser,
+  signupUser,
+  uploadSound,
+} from "../controllers/userController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 import rateLimit from "express-rate-limit";
 
@@ -18,4 +22,7 @@ router.post("/auth/signup", authLimiter, signupUser);
 router.get("/profile", requireAuth, async (req, res) => {
   res.json({ message: "Welcome, you are authenticated", user: req.user });
 });
+
+router.post("upload", requireAuth, uploadSound);
+
 export default router;

@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import fetch from "node-fetch";
 import express from "express";
 //DATABASE SETUP
@@ -7,8 +6,7 @@ dotenv.config();
 
 const router = express.Router();
 const apiKey = process.env.FREESOUND_API_KEY;
-const baseUrl = "https://freesound.org/apiv2"
-
+const baseUrl = "https://freesound.org/apiv2";
 
 router.get("/sound/:id", async (req, res) => {
     const {id} = req.params;
@@ -47,3 +45,4 @@ router.get("/sound/:id", async (req, res) => {
 });
 
 export default router;
+
