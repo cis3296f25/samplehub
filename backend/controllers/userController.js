@@ -89,4 +89,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { signupUser, loginUser };
+const uploadSound = async (req, res) => {};
+
+export { signupUser, loginUser, uploadSound };
