@@ -2,6 +2,8 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { useEffect } from "react";
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -32,4 +34,27 @@ function App() {
   )
 }
 
-export default App
+export default function sound() {
+  useEffect(() => {
+    async function testBackend() {
+      try {
+        const res = await fetch("http://localhost:5000/api/sound/830227");
+        const data = await res.json();
+
+        console.log(data);
+        
+        const audio = new Audio(data.previews["preview-hq-mp3"]);
+        const playButton = document.createElement("button");
+        playButton.textContent = "Play Sound";
+        playButton.onclick = () => audio.play();
+        document.body.appendChild(playButton);
+      } catch (err) {
+        console.error("Error fetching sound:", err);
+      }
+    }
+
+    testBackend();
+  }, []);
+
+  return <h1>Freesound Test</h1>;
+}
