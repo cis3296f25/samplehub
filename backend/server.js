@@ -23,10 +23,6 @@ app.use("/api", freesoundRoutes);
 
 app.use("/api/user/", userRoutes);
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
-
 // Serve frontend
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,5 +34,5 @@ app.get("/*splat", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is listening, started at port ${PORT}`);
+  console.log(`Server is listening, running at http://localhost:${PORT}`);
 });
