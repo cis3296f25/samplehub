@@ -27,9 +27,7 @@ app.get("/api/test", (req, res) => {
   res.send("API route is working");
 });
 
-
-
-// app.use("/api/user/", userRoutes);
+app.use("/api/user/", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is listening, started at port ${PORT}`);
