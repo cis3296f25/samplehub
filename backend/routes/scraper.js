@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import fetch from "node-fetch";
 import express from "express";
 //DATABASE SETUP

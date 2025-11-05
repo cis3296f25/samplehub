@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 
-dotenv.config();
 import userRoutes from "./routes/user.js";
 import freesoundRoutes from "./routes/scraper.js";
 
