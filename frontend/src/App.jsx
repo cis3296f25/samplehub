@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
+import { useEffect } from "react";
 
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
   )
 }
 
-export default function App() {
+export default function sound() {
   useEffect(() => {
     async function testBackend() {
       try {
