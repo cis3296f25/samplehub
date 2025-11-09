@@ -7,12 +7,15 @@ import { fileURLToPath } from "url";
 
 import userRoutes from "./routes/user.js";
 import freesoundRoutes from "./routes/scraper.js";
+import { fetchSounds } from "./routes/scraper.js";
 
 const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
 app.use("/api", freesoundRoutes);
+
+fetchSounds(); 
 
 app.use(express.json());
 
@@ -33,5 +36,6 @@ app.get("/{*splat}", (req, res) => {
 });
 
 app.listen(PORT, () => {
+  
   console.log(`Server is listening, running at http://localhost:${PORT}`);
 });

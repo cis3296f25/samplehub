@@ -18,6 +18,7 @@ CREATE TABLE samples (
   key_sig VARCHAR(10),
   genre VARCHAR(100),
   license VARCHAR(100),
+  ALTER TABLE samples ADD COLUMN definision TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
