@@ -9,7 +9,7 @@ export default function App() {
   useEffect(() => {
     async function testBackend() {
       try {
-        const res = await fetch("http://localhost:5000/api/sound/832434");
+        const res = await fetch("http://localhost:5000/api/sound/832451");
         const data = await res.json();
 
         console.log("Fetched data:", data);
@@ -18,7 +18,7 @@ export default function App() {
         const playButton = document.createElement("button");
         playButton.textContent = "Play Sound";
         playButton.onclick = () => audio.play();
-        document.body.appendChild(playButton);
+        document.querySelector("#root").appendChild(playButton);
       } catch (err) {
         console.error("Error fetching sound:", err);
       }

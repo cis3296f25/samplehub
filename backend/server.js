@@ -20,9 +20,6 @@ app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
-
-app.use("/api", freesoundRoutes);
-
 app.use("/api/user/", userRoutes);
 
 // Serve frontend
