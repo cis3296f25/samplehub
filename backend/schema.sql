@@ -14,12 +14,11 @@ CREATE TABLE samples (
   source VARCHAR(100),
   source_url TEXT,
   preview_url TEXT,
-  bpm INT,
-  key_sig VARCHAR(10),
   genre VARCHAR(100),
+  file_size BIGINT,
+  duration NUMERIC(10, 2),
   license VARCHAR(100),
-  ALTER TABLE samples ADD COLUMN definision TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE table sample_packs (
@@ -42,6 +41,4 @@ CREATE TABLE pack_samples (
 );
 
 CREATE INDEX idx_samples_genre ON samples(genre);
-CREATE INDEX idx_samples_bpm ON samples(bpm);
-CREATE INDEX idx_samples_keysig ON samples(key_sig);
 CREATE INDEX idx_samples_textsearch ON samples USING GIN (to_tsvector('english', title || ' ' || genre));
