@@ -9,16 +9,12 @@ const requireAuth = (req, res, next) => {
     }
 
     const token = authorization.split(" ")[1];
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-        algorithms: ["HS256"],
-      });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
 
-      req.user = decoded;
-      next();
-    } catch (err) {
-      res.status(401).json({ err, message: "Invalid or expired token" });
-    }
+    req.user = decoded;
+    next();
   } catch (err) {
     return res.status(500).json(err);
   }

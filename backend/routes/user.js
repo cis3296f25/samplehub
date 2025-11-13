@@ -19,10 +19,6 @@ router.post("/auth/login", authLimiter, loginUser);
 
 router.post("/auth/signup", authLimiter, signupUser);
 
-router.get("/profile", requireAuth, async (req, res) => {
-  res.json({ message: "Welcome, you are authenticated", user: req.user });
-});
-
-router.post("upload", requireAuth, uploadSound);
+router.post("/upload", requireAuth, uploadSound);
 
 export default router;

@@ -89,6 +89,48 @@ const loginUser = async (req, res) => {
   }
 };
 
-const uploadSound = async (req, res) => {};
+const uploadSound = async (req, res) => {
+  try {
+    const {
+      title,
+      source = "user_upload",
+      source_url = null,
+      preview_url,
+      genre,
+      file_size,
+      duration,
+      license,
+    } = req.body;
+
+    if (!title || !preview_url) {
+      return res.status(400).json({ error: "Missing title or file URL" });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO samples 
+      (title, source, source_url, preview_url, genre, file_size, duration, license) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *`,
+      [
+        title,
+        source,
+        source_url,
+        preview_url,
+        genre,
+        file_size,
+        duration,
+        license,
+      ],
+    );
+
+    res.staus(201).json({
+      message: "Sample uploaded successfully",
+      sample: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Failed to upload smaple" });
+  }
+};
 
 export { signupUser, loginUser, uploadSound };

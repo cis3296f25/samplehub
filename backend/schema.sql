@@ -18,7 +18,7 @@ CREATE TABLE samples (
   file_size BIGINT,
   duration NUMERIC(10, 2),
   license VARCHAR(100),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE table sample_packs (
