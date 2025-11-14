@@ -33,7 +33,7 @@ function App() {
 
       {/* Navbar */}
       <nav className="navbar">
-        <h2 className="logo">🎵 SampleHub</h2>
+        <h2 className="logo"> SampleHub</h2>
 
         <button
           onClick={() => setShowDashboard(!showDashboard)}
