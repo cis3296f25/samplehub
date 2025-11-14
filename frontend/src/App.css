@@ -143,3 +143,34 @@ body, html, #root {
   color: #aaa;
   margin-top: 3rem;
 }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard {
+  flex: 1;
+  padding: 40px;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.switch-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: none;
+  color: #ff4f79; /* same pink vibe as your Sign Up button */
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
+  padding: 0;
+}
+
+.switch-btn:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}

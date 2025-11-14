@@ -1,7 +1,6 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD_LagvYj2O-hZrzJaiF0GgjFvzE1ACku8",
@@ -13,9 +12,11 @@ const firebaseConfig = {
   measurementId: "G-TCFGYXXJBP",
 };
 
-
 const app = initializeApp(firebaseConfig);
 
-const analytics = getAnalytics(app);
+// avoid analytics errors in local dev
+isSupported().then((supported) => {
+  if (supported) getAnalytics(app);
+});
 
 export const auth = getAuth(app);
