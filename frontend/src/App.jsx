@@ -1,49 +1,34 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import AuthBox from "./components/AuthBox";
 import "./App.css";
 
 export default function App() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    async function testBackend() {
-      try {
-        const res = await fetch("http://localhost:5000/api/sound/832451");
-        const data = await res.json();
-
-        console.log("Fetched data:", data);
-
-        const audio = new Audio(data.previews["preview-hq-mp3"]);
-        const playButton = document.createElement("button");
-        playButton.textContent = "Play Sound";
-        playButton.onclick = () => audio.play();
-        document.querySelector("#root").appendChild(playButton);
-      } catch (err) {
-        console.error("Error fetching sound:", err);
-      }
-    }
-
-    testBackend();
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authMode, setAuthMode] = useState("signup");
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + Freesound</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
+    <div className="app">
+      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+
+      {!isLoggedIn ? (
+        <div className="home-layout">
+          <Home />
+          <AuthBox
+            authMode={authMode}
+            setAuthMode={setAuthMode}
+            onLogin={() => setIsLoggedIn(true)}
+          />
+        </div>
+      ) : (
+        <Dashboard />
+      )}
+
+      <footer className="footer">
+        © 2025 SampleHub • Team Joey | Shiven | Arwin | Joshua
+      </footer>
+    </div>
   );
 }
-
