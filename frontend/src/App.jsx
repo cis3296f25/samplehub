@@ -1,8 +1,9 @@
 import { useState } from "react";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import AuthBox from "./components/AuthBox";
+import Navbar from "./Components/NavBar";
+import Home from "./Pages/Home";
+import Dashboard from "./Pages/Dashboard";
+import AuthBox from "./Components/AuthBox";
+import UploadSound from "./Components/UploadSound";
 import "./App.css";
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
       ) : (
         <Dashboard />
       )}
+      <UploadSound></UploadSound>
 
       <footer className="footer">
         © 2025 SampleHub • Team Joey | Shiven | Arwin | Joshua
