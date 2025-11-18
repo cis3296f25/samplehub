@@ -1,3 +1,4 @@
+import "./UploadSound.css";
 import { useState } from "react";
 import { auth } from "./firebaseConfig";
 
@@ -46,7 +47,7 @@ export default function UploadSound() {
       formData.append("genre", genre);
       formData.append("duration", duration);
 
-      const res = await fetch("/api/user/upload", {
+      const res = await fetch("http://localhost:5000/api/user/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,7 +60,7 @@ export default function UploadSound() {
       if (!res.ok) {
         setMessage("Upload failed: " + json.error);
       } else {
-        setMessage("🎉 Uploaded successfully!");
+        setMessage("Uploaded successfully!");
       }
     } catch (err) {
       setMessage("Upload failed: " + err.message);
@@ -70,13 +71,11 @@ export default function UploadSound() {
   };
 
   return (
-    <div className="upload-container" style={styles.container}>
+    <div className="container">
       <h2>Upload a Sample</h2>
 
-      {/* File Input */}
       <input type="file" accept="audio/*" onChange={handleFileChange} />
 
-      {/* Audio Preview */}
       {preview && (
         <audio
           controls
@@ -85,69 +84,32 @@ export default function UploadSound() {
         />
       )}
 
-      {/* Title */}
       <input
         type="text"
         placeholder="Sample Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={styles.input}
       />
 
-      {/* Genre */}
       <input
         type="text"
         placeholder="Genre"
         value={genre}
         onChange={(e) => setGenre(e.target.value)}
-        style={styles.input}
       />
 
-      {/* Duration */}
       <input
         type="number"
         placeholder="Duration (seconds)"
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
-        style={styles.input}
       />
 
-      {/* Upload Button */}
-      <button onClick={handleUpload} disabled={uploading} style={styles.button}>
+      <button onClick={handleUpload} disabled={uploading}>
         {uploading ? "Uploading..." : "Upload"}
       </button>
 
-      {/* Status / Message */}
-      {message && <p style={styles.message}>{message}</p>}
+      {message && <p className="message">{message}</p>}
     </div>
   );
 }
-
-// Simple styling
-const styles = {
-  container: {
-    padding: "1rem",
-    maxWidth: "400px",
-    margin: "0 auto",
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-  },
-  input: {
-    padding: "8px",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-  },
-  button: {
-    padding: "10px",
-    backgroundColor: "#6a4df5",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  message: {
-    marginTop: "10px",
-    fontWeight: "bold",
-  },
-};
