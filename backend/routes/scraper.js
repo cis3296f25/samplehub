@@ -3,6 +3,7 @@ import express from "express";
 //DATABASE SETUP
 import Pool from "../db.js";
 
+
 const router = express.Router();
 const apiKey = process.env.FREESOUND_API_KEY;
 const baseUrl = "https://freesound.org/apiv2";
@@ -52,6 +53,20 @@ async function fetchSounds() {
 }
 export { fetchSounds };
 
+// ROUTE TO FETCH SAMPLES FROM DATABASE
+router.get("/samples", async (req, res) => {
+  try {
+    const result = await Pool.query(
+      "SELECT * FROM samples ORDER BY created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching samples:", err);
+    res.status(500).json({ error: "Failed to fetch samples"});
+  }
+
+});
+
 router.get("/sound/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -93,5 +108,23 @@ router.get("/sound/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch sound" });
   }
 });
+
+// ADD TO favorites
+router.post("/favorites", async (req, res) => {
+  const { userId, sampleId } = req.body;
+  try {
+    await Pool.query(
+      "INSERT INTO favorites (user_id, sample_id) VALUES ($1, $2)",
+      [userId, sampleId]
+    );
+    res.json({ message: "Added to favorites"});
+  } catch (err) {
+    console.error("Error adding to favorites:", err);
+    res.status(500).json({ error: "Failed to add to favorites" });
+  }
+});
+
+
+
 
 export default router;

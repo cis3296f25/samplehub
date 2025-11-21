@@ -25,6 +25,7 @@ app.use("/api", freesoundRoutes);
 
 app.use("/api/user/", userRoutes);
 app.use("/api/search/", searchRoutes);
+app.use("/api/samples", fetchSounds);
 
 app.listen(PORT, () => {
   console.log(`Server is listening, running at http://localhost:${PORT}`);
