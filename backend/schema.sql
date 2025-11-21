@@ -3,21 +3,22 @@ DROP TABLE IF EXISTS favorites, pack_samples, sample_packs, samples, users CASCA
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
+  firebase_uid VARCHAR(128) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE samples (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
-  source VARCHAR(100),
+  source VARCHAR(100) DEFAULT 'user_upload',
   source_url TEXT,
-  preview_url TEXT,
-  bpm INT,
-  key_sig VARCHAR(10),
+  preview_url TEXT NOT NULL,
   genre VARCHAR(100),
-  license VARCHAR(100),
+  file_size BIGINT,
+  duration NUMERIC(10, 2),
+  license VARCHAR(100) DEFAULT 'https://creativecommons.org/licenses/by/4.0/',
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -41,6 +42,4 @@ CREATE TABLE pack_samples (
 );
 
 CREATE INDEX idx_samples_genre ON samples(genre);
-CREATE INDEX idx_samples_bpm ON samples(bpm);
-CREATE INDEX idx_samples_keysig ON samples(key_sig);
 CREATE INDEX idx_samples_textsearch ON samples USING GIN (to_tsvector('english', title || ' ' || genre));

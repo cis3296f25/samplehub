@@ -1,60 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import Navbar from "./Components/NavBar";
+import Home from "./Pages/Home";
+import Dashboard from "./Pages/Dashboard";
+import Auth from "./Pages/Auth";
+import UploadSound from "./Components/UploadSound";
+import { auth } from "./Components/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import "./App.css";
 
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentView, setCurrentView] = useState("home");
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default function sound() {
+  // Listen to Firebase auth state changes
   useEffect(() => {
-    async function testBackend() {
-      try {
-        const res = await fetch("http://localhost:5000/api/sound/830227");
-        const data = await res.json();
-
-        console.log(data);
-        
-        const audio = new Audio(data.previews["preview-hq-mp3"]);
-        const playButton = document.createElement("button");
-        playButton.textContent = "Play Sound";
-        playButton.onclick = () => audio.play();
-        document.body.appendChild(playButton);
-      } catch (err) {
-        console.error("Error fetching sound:", err);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+      if (user) {
+        setCurrentView("home");
       }
-    }
+    });
 
-    testBackend();
+    return () => unsubscribe();
   }, []);
 
-  return <h1>Freesound Test</h1>;
+  const handleUploadClick = () => {
+    if (isLoggedIn) {
+      setShowUploadModal(true);
+    } else {
+      setCurrentView("auth");
+    }
+  };
+
+  const handleAuthClick = () => {
+    setCurrentView("auth");
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setCurrentView("home");
+  };
+
+  const renderContent = () => {
+    if (currentView === "auth") {
+      return <Auth onLogin={handleLogin} />;
+    }
+
+    if (!isLoggedIn) {
+      return (
+        <div className="home-layout">
+          <Home />
+        </div>
+      );
+    }
+
+    return <Dashboard />;
+  };
+
+  return (
+    <div className="app">
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        onUploadClick={handleUploadClick}
+        onAuthClick={handleAuthClick}
+        onLogoClick={() => setCurrentView("home")}
+      />
+
+      {renderContent()}
+
+      {showUploadModal && isLoggedIn && (
+        <UploadSound
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+        />
+      )}
+
+      <footer className="footer">
+        © 2025 SampleHub • Team Joey | Shiven | Arwin | Joshua
+      </footer>
+    </div>
+  );
 }

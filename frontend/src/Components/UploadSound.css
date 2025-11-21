@@ -1,0 +1,126 @@
+.upload-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.upload-modal {
+  background: #1a1a1a;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.upload-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upload-modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.container input[type="file"] {
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: #0d0d0d;
+  color: white;
+  cursor: pointer;
+}
+
+.container input[type="text"],
+.container input[type="number"] {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: #0d0d0d;
+  color: white;
+  font-size: 1rem;
+}
+
+.container input[type="text"]:focus,
+.container input[type="number"]:focus {
+  outline: none;
+  border-color: #ff3b6a;
+}
+
+.container button {
+  padding: 0.75rem;
+  background-color: #ff3b6a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.container button:hover:not(:disabled) {
+  background-color: #e2335d;
+}
+
+.container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.message {
+  color: #fff;
+}
+
+.message:empty {
+  display: none;
+}

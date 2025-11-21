@@ -1,28 +1,17 @@
 import express from "express";
-import {
-  loginUser,
-  signupUser,
-  uploadSound,
-} from "../controllers/userController.js";
-import { requireAuth } from "../middleware/requireAuth.js";
-import rateLimit from "express-rate-limit";
+import { uploadSound } from "../controllers/userController.js";
+import { upload } from "../middleware/upload.js";
+import { requireFirebaseAuth } from "../middleware/requireFirebaseAuth.js";
+import { ensureUser } from "../middleware/ensureUser.js";
 
 const router = express.Router();
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 5 requets per window
-  message: { error: "Too many attempts, please try again later" },
-});
-
-router.post("/auth/login", authLimiter, loginUser);
-
-router.post("/auth/signup", authLimiter, signupUser);
-
-router.get("/profile", requireAuth, async (req, res) => {
-  res.json({ message: "Welcome, you are authenticated", user: req.user });
-});
-
-router.post("upload", requireAuth, uploadSound);
+router.post(
+  "/upload",
+  requireFirebaseAuth,
+  ensureUser,
+  upload.single("file"),
+  uploadSound,
+);
 
 export default router;
