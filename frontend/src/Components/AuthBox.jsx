@@ -3,7 +3,6 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Login from "./Login";
 import { auth } from "./firebaseConfig";
 
-
 export default function AuthBox({ authMode, setAuthMode, onLogin }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,6 +22,10 @@ export default function AuthBox({ authMode, setAuthMode, onLogin }) {
       setName("");
       setEmail("");
       setPassword("");
+
+      if (onLogin) {
+        onLogin();
+      }
     } catch (e) {
       setError(e.message);
     }
@@ -35,7 +38,7 @@ export default function AuthBox({ authMode, setAuthMode, onLogin }) {
       </h2>
 
       {submitted && authMode === "signup" ? (
-        <p className="thank-you">✅ Thank you for signing up!</p>
+        <p className="thank-you">Thank you for signing up!</p>
       ) : authMode === "signup" ? (
         <>
           <form className="signup-form" onSubmit={signup}>
