@@ -103,11 +103,11 @@ export default function Home() {
 
 
   return (
-    <section className="left-section">
+    
+    <section className="sample-discovery">
       <h1 className="main-title">
         Find, preview, and collect samples — all in one place.
       </h1>
-
       <div className="search-controls">
         <input 
         type="text" placeholder="Search samples..."
@@ -153,7 +153,10 @@ export default function Home() {
           <div className="no-samples">No samples found.</div>
         ) : (
           samples.map((sample) => (
-            <div key={sample.id} className="sample-card">
+            <div key={sample.id} className={sample.genre == "Hip-Hop" ? "sample-card hip-hop" : 
+                                            sample.genre == "EDM" ? "sample-card edm" :
+                                            sample.genre == "Pop" ? "sample-card pop" :
+                                            "sample-card"}>
               <div className="sample-header">
                 <h3>{sample.title}</h3>
                 {sample.genre && (
@@ -196,6 +199,9 @@ export default function Home() {
             </div>
           ))
         )}
+      </div>
+      <div className="sample-info">
+        Here is where the full information for a sample can be found
       </div>
     </section>
   );

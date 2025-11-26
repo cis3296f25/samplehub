@@ -53,7 +53,8 @@ body, html, #root {
 }
 
 
-.left-section .main-title {
+.sample-discovery .main-title {
+  align-items: center;
   font-size: 2rem;
   margin-bottom: 2rem;
 }
@@ -96,13 +97,8 @@ body, html, #root {
   border-radius: 8px;
 }
 
-
-.right-section {
-  background: #111;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 350px;
-  margin: auto;
+.sample-info {
+  
 }
 
 .signup-title {
@@ -179,4 +175,15 @@ body, html, #root {
 .switch-btn:hover {
   text-decoration: underline;
   opacity: 0.8;
+}
+
+.hip-hop {
+  background-color: rgba(255, 162, 0, 0.5);
+}
+
+.edm {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+.pop {
+  background-color: rgba(255, 97, 160, 0.5)
 }
