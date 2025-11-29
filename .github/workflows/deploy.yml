@@ -45,10 +45,9 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "backend/*"
-        target: "/data/www/samplehub/"
-        strip_components: 0
+        target: "/data/www/samplehub/backend"
+        strip_components: 1
         overwrite: true
-        rm: true
     
     - name: Restart services
       uses: appleboy/ssh-action@master
