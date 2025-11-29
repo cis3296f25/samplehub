@@ -59,6 +59,9 @@ jobs:
           sudo chown -R $USER:$USER /data/www/samplehub/dist
           sudo chmod -R 755 /data/www/samplehub/dist
           cd /data/www/samplehub/backend
+          if [ ! -f .env ]; then
+            echo "WARNING: .env file not found!"
+          fi
           npm ci 
           pm2 restart server
           
