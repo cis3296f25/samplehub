@@ -15,20 +15,40 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: |
+          frontend/package-lock.json
+          backend/package-lock.json
+          
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
       
-    - run: npm ci
-    - run: npm run build --if-present
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build --if-present
     
-    - name: Deploy to server
+    - name: Deploy frontend to server
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "dist/*"
+        source: "frontend/dist/*"
+        target: "/data/www/samplehub/"
+        strip_components: 1
+        overwrite: true
+        
+    - name: Deploy backend to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "backend/*"
         target: "/data/www/samplehub/"
         strip_components: 0
         overwrite: true
+        rm: true
     
     - name: Restart services
       uses: appleboy/ssh-action@master
@@ -39,4 +59,8 @@ jobs:
         script: |
           sudo chown -R $USER:$USER /data/www/samplehub/dist
           sudo chmod -R 755 /data/www/samplehub/dist
+          cd /data/www/samplehub/backend
+          npm ci 
+          pm2 restart server
+          
           sudo nginx -t && sudo nginx -s reload
