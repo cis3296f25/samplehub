@@ -159,7 +159,7 @@ export default function Home() {
                 {sample.genre && (
                   <span className="genre-tag">{sample.genre}</span>
                 )}
-                <button className="fav-btn" onClick={() => toggleFavorite(sample.id)}>{favorites.includes(sample.id) ? 'Favorite' : 'Not Favorite'}</button>
+                <button className="fav-btn" onClick={() => toggleFavorite(sample.id)}>{favorites.includes(sample.id) ? '❤️' : '🤍'}</button>
               </div>
 
               <div className="sample-info">
