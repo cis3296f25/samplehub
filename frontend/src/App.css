@@ -1,5 +1,6 @@
-
-body, html, #root {
+body,
+html,
+#root {
   height: 100%;
   margin: 0;
   background: #0d0d0d;
@@ -7,14 +8,13 @@ body, html, #root {
   font-family: Inter, sans-serif;
 }
 
-
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
   background: #0d0d0d;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
 }
@@ -38,12 +38,17 @@ body, html, #root {
   cursor: pointer;
   color: white;
   font-weight: 600;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1.5;
+  display: inline-block;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .nav-btn:hover {
   background: #e2335d;
 }
-
 
 .home-layout {
   display: grid;
@@ -52,12 +57,14 @@ body, html, #root {
   padding: 3rem 4rem;
 }
 
+.left-section {
+  margin: 2rem;
+}
 
 .left-section .main-title {
   font-size: 2rem;
   margin-bottom: 2rem;
 }
-
 
 .search-controls {
   display: flex;
@@ -95,7 +102,6 @@ body, html, #root {
   background: #1a1a1a;
   border-radius: 8px;
 }
-
 
 .right-section {
   background: #111;
@@ -169,7 +175,7 @@ body, html, #root {
   margin-top: 12px;
   background: transparent;
   border: none;
-  color: #ff4f79; /* same pink vibe as your Sign Up button */
+  color: #ff4f79;
   cursor: pointer;
   font-size: 0.9rem;
   text-align: left;

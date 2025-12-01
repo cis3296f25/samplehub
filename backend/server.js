@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import userRoutes from "./routes/user.js";
+import randomRoutes from "./routes/random.js";
 import searchRoutes from "./routes/search.js";
 import freesoundRoutes from "./routes/scraper.js";
 import { fetchSounds } from "./routes/scraper.js";
@@ -21,10 +22,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api", freesoundRoutes);
+app.use("/api/", freesoundRoutes);
 
 app.use("/api/user/", userRoutes);
 app.use("/api/search/", searchRoutes);
+app.use("/api/", randomRoutes);
 app.use("/api/samples", fetchSounds);
 
 app.listen(PORT, () => {
