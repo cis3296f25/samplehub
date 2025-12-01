@@ -5,10 +5,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [selectedBPM, setSelectedBPM] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
 
-  // FAVORITES STATE
   const [favorites, setFavorites] = useState([]);
 
   const userId = 1; //PLACEHOLDER FOR USER ID
@@ -125,16 +123,6 @@ export default function Home() {
         </select>
 
         <select
-          value={selectedBPM}
-          onChange={(e) => setSelectedBPM(e.target.value)}
-        >
-          <option value="">BPM</option>
-          <option value="80-100">80–100</option>
-          <option value="100-200">100–120</option>
-          <option value="120-140">120–140</option>
-        </select>
-
-        <select
           value={selectedDuration}
           onChange={(e) => setSelectedDuration(e.target.value)}
         >
@@ -166,7 +154,7 @@ export default function Home() {
                   className="fav-btn"
                   onClick={() => toggleFavorite(sample.id)}
                 >
-                  {favorites.includes(sample.id) ? "Favorite" : "Not Favorite"}
+                  {favorites.includes(sample.id) ? "❤️" : "🤍"}
                 </button>
               </div>
 
