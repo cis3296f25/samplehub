@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "./firebaseConfig";
+import logo from "./favicon-48x48.png";
 
 export default function Navbar({ isLoggedIn, setIsLoggedIn, onUploadClick }) {
   const navigate = useNavigate();
@@ -12,8 +13,17 @@ export default function Navbar({ isLoggedIn, setIsLoggedIn, onUploadClick }) {
 
   return (
     <nav className="navbar">
-      <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-        <h2 className="logo" style={{ cursor: "pointer" }}>
+      <Link
+        to="/"
+        style={{
+          textDecoration: "none",
+          color: "inherit",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <img src={logo} alt="Logo" />
+        <h2 className="logo" style={{ cursor: "pointer", marginLeft: "7px" }}>
           SampleHub
         </h2>
       </Link>
