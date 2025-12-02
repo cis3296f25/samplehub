@@ -95,6 +95,15 @@ export default function Home() {
     const mb = (bytes / (1024 * 1024)).toFixed(2);
     return `${mb} MB`;
   };
+  // Force file download helper
+  const downloadFile = (url, name) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
   return (
     <section className="left-section">
@@ -102,6 +111,7 @@ export default function Home() {
         Find, preview, and collect samples — all in one place.
       </h1>
 
+      {/* Search Controls */}
       <div className="search-controls">
         <input
           type="text"
@@ -136,6 +146,7 @@ export default function Home() {
         </button>
       </div>
 
+      {/* Sample List */}
       <div className="samples-list">
         {loading ? (
           <div className="loading">Loading samples...</div>
