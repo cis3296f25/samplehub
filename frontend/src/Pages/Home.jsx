@@ -65,20 +65,11 @@ export default function Home() {
 
     try {
       if (isFavorited) {
-<<<<<<< HEAD
         await fetch(`/api/favorites?userId=${userId}&sampleId=${sampleId}`, {
-          method: "DELETE"
+          method: "DELETE",
         });
 
-        setFavorites(favorites.filter(id => id !== sampleId));
-=======
-        await fetch("/api/favorites", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, sampleId }),
-        });
         setFavorites(favorites.filter((id) => id !== sampleId));
->>>>>>> a68e12509600c90b267565b149bddaf1ce444994
       } else {
         await fetch("/api/favorites", {
           method: "POST",
