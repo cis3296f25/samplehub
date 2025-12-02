@@ -5,10 +5,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [selectedBPM, setSelectedBPM] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
 
-  // FAVORITES STATE
   const [favorites, setFavorites] = useState([]);
 
   const userId = 1; //PLACEHOLDER FOR USER ID
@@ -22,7 +20,7 @@ export default function Home() {
   const fetchSample = async () => {
     try {
       setLoading(true);
-      const response = await fetch('api/samples');
+      const response = await fetch("api/samples");
       const data = await response.json();
       setSamples(data);
     } catch (error) {
@@ -37,12 +35,11 @@ export default function Home() {
     try {
       const response = await fetch(`/api/favorites/${userId}`);
       const data = await response.json();
-      setFavorites(data.map(fav => fav.sample_id));
+      setFavorites(data.map((fav) => fav.sample_id));
     } catch (error) {
       console.error("Error fetching favorites:", error);
     }
   };
-
 
   // SEARCH HANDLER
   const handleSearch = async () => {
@@ -68,16 +65,25 @@ export default function Home() {
 
     try {
       if (isFavorited) {
+<<<<<<< HEAD
         await fetch(`/api/favorites?userId=${userId}&sampleId=${sampleId}`, {
           method: "DELETE"
         });
 
         setFavorites(favorites.filter(id => id !== sampleId));
+=======
+        await fetch("/api/favorites", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, sampleId }),
+        });
+        setFavorites(favorites.filter((id) => id !== sampleId));
+>>>>>>> a68e12509600c90b267565b149bddaf1ce444994
       } else {
-        await fetch('/api/favorites', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, sampleId })
+        await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, sampleId }),
         });
         setFavorites([...favorites, sampleId]);
       }
@@ -86,20 +92,18 @@ export default function Home() {
     }
   };
 
-
   const formatDuration = (seconds) => {
-    if (!seconds) return 'N/A';
+    if (!seconds) return "N/A";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const formatFileSize = (bytes) => {
-    if (!bytes) return 'N/A';
+    if (!bytes) return "N/A";
     const mb = (bytes / (1024 * 1024)).toFixed(2);
     return `${mb} MB`;
   };
-
 
   return (
     <section className="left-section">
@@ -108,28 +112,22 @@ export default function Home() {
       </h1>
 
       <div className="search-controls">
-        <input 
-        type="text" placeholder="Search samples..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        onKeyPress={(e) => e.key === 'Enter' && handleSearch()} 
+        <input
+          type="text"
+          placeholder="Search samples..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && handleSearch()}
         />
 
-        <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
+        <select
+          value={selectedGenre}
+          onChange={(e) => setSelectedGenre(e.target.value)}
+        >
           <option value="">Genre</option>
           <option value="Hip-Hop">Hip-Hop</option>
           <option value="EDM">EDM</option>
           <option value="POP">Pop</option>
-        </select>
-
-        <select
-          value={selectedBPM}
-          onChange={(e) => setSelectedBPM(e.target.value)}
-        >
-          <option value="">BPM</option>
-          <option value="80-100">80–100</option>
-          <option value="100-200">100–120</option>
-          <option value="120-140">120–140</option>
         </select>
 
         <select
@@ -142,7 +140,9 @@ export default function Home() {
           <option value="long">Long (&gt;30s)</option>
         </select>
 
-        <button className="search-btn" onClick={handleSearch}>Search</button>
+        <button className="search-btn" onClick={handleSearch}>
+          Search
+        </button>
       </div>
 
       <div className="samples-list">
@@ -158,7 +158,12 @@ export default function Home() {
                 {sample.genre && (
                   <span className="genre-tag">{sample.genre}</span>
                 )}
-                <button className="fav-btn" onClick={() => toggleFavorite(sample.id)}>{favorites.includes(sample.id) ? '❤️' : '🤍'}</button>
+                <button
+                  className="fav-btn"
+                  onClick={() => toggleFavorite(sample.id)}
+                >
+                  {favorites.includes(sample.id) ? "❤️" : "🤍"}
+                </button>
               </div>
 
               <div className="sample-info">
@@ -173,24 +178,6 @@ export default function Home() {
                   <source src={sample.preview_url} type="audio/mpeg" />
                   Your browser does not support the audio element.
                 </audio>
-              )}
-
-              <div className="sample-footer">
-                <span className="source">Source: {sample.source}</span>
-                {sample.license && (
-                  <span className="license">{sample.license}</span>
-                )}
-              </div>
-
-              {sample.source_url && (
-                <a 
-                  href={sample.source_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="view-source"
-                >
-                  View on FreeSound
-                </a>
               )}
             </div>
           ))
