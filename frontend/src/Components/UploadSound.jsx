@@ -2,6 +2,8 @@ import "./UploadSound.css";
 import { useState, useEffect } from "react";
 import { auth } from "./firebaseConfig";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || `/api`;
+
 export default function UploadSound({ isOpen, onClose }) {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState("");
@@ -10,7 +12,6 @@ export default function UploadSound({ isOpen, onClose }) {
   const [preview, setPreview] = useState(null);
 
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -30,8 +31,15 @@ export default function UploadSound({ isOpen, onClose }) {
     setFile(selected);
 
     if (selected) {
-      setPreview(URL.createObjectURL(selected));
+      const previewUrl = URL.createObjectURL(selected);
+      setPreview(previewUrl);
       if (!title) setTitle(selected.name.replace(/\.[^/.]+$/, ""));
+
+      const audio = new Audio(previewUrl);
+      audio.addEventListener("loadedmetadata", () => {
+        const roundedDuration = Math.round(audio.duration);
+        setDuration(roundedDuration.toString());
+      });
     }
   };
 
@@ -57,9 +65,9 @@ export default function UploadSound({ isOpen, onClose }) {
       formData.append("file", file);
       formData.append("title", title);
       formData.append("genre", genre);
-      formData.append("duration", duration);
+      formData.append("duration", Math.round(parseFloat(duration) || 0));
 
-      const res = await fetch("http://localhost:5000/api/user/upload", {
+      const res = await fetch(`${BASE_URL}/user/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -87,7 +95,6 @@ export default function UploadSound({ isOpen, onClose }) {
       setMessage("Upload failed: " + err.message);
     } finally {
       setUploading(false);
-      setProgress(0);
     }
   };
 
@@ -110,7 +117,11 @@ export default function UploadSound({ isOpen, onClose }) {
             <audio
               controls
               src={preview}
-              style={{ marginTop: "10px", display: "block", width: "100%" }}
+              style={{ display: "block", width: "100%" }}
+              onLoadedMetadata={(e) => {
+                const roundedDuration = Math.round(e.target.duration);
+                setDuration(roundedDuration.toString());
+              }}
             />
           )}
 
@@ -128,12 +139,11 @@ export default function UploadSound({ isOpen, onClose }) {
             onChange={(e) => setGenre(e.target.value)}
           />
 
-          <input
-            type="number"
-            placeholder="Duration (seconds)"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-          />
+          {duration && (
+            <div style={{ padding: "0.5rem", color: "#aaa" }}>
+              Duration: {duration} seconds
+            </div>
+          )}
 
           <button onClick={handleUpload} disabled={uploading}>
             {uploading ? "Uploading..." : "Upload"}

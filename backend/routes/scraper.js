@@ -124,6 +124,29 @@ router.post("/favorites", async (req, res) => {
   }
 });
 
+// DELETE FAV
+router.delete("/favorites", async (req, res) => {
+  const { userId, sampleId } = req.query;
+
+  if (!userId || !sampleId) {
+    return res.status(400).json({ error: "Missing userId or sampleId" });
+  }
+
+  try {
+    await Pool.query(
+      "DELETE FROM favorites WHERE user_id = $1 AND sample_id = $2",
+      [userId, sampleId]
+    );
+
+    res.json({ message: "Removed from favorites" });
+  } catch (err) {
+    console.error("Error removing favorite:", err);
+    res.status(500).json({ error: "Failed to remove favorite" });
+  }
+});
+
+
+
 
 
 
