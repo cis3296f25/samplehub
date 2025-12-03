@@ -8,8 +8,14 @@ export default function Home() {
   const [selectedDuration, setSelectedDuration] = useState("");
 
   const [favorites, setFavorites] = useState([]);
+  const [pack_samples, setPack] = useState([]);
 
   const userId = 1; //PLACEHOLDER FOR USER ID
+
+  useEffect(() => {
+    fetchSample();
+    fetchAddedPack();
+  }, []);
 
   useEffect(() => {
     fetchSample();
@@ -20,7 +26,7 @@ export default function Home() {
   const fetchSample = async () => {
     try {
       setLoading(true);
-      const response = await fetch("api/samples");
+      const response = await fetch("/api/samples");
       const data = await response.json();
       setSamples(data);
     } catch (error) {
@@ -36,6 +42,15 @@ export default function Home() {
       const response = await fetch(`/api/favorites/${userId}`);
       const data = await response.json();
       setFavorites(data.map((fav) => fav.sample_id));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+  const fetchAddedPack = async () => {
+    try {
+      const response = await fetch(`/api/sample_packs/${userId}`);
+      const data = await response.json();
+      setPack(data.map((pack) => pack.sample_id));
     } catch (error) {
       console.error("Error fetching favorites:", error);
     }
@@ -81,6 +96,17 @@ export default function Home() {
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
+  };
+
+  const AddToPack = async (sampleId) => {
+    alert("adding the sample to the pack");
+    await fetch("/api/pack_samples", {
+      method: "POST",
+      headers: { "Content-Type": "application/json"},
+      body: JSON.stringify({ packId, sampleId })
+    });
+
+    setPack([...pack_samples, sampleId]);
   };
 
   const formatDuration = (seconds) => {
@@ -149,6 +175,12 @@ export default function Home() {
                 {sample.genre && (
                   <span className="genre-tag">{sample.genre}</span>
                 )}
+                <button
+                  className="add-to-pack-btn"
+                  onClick={() => AddToPack(sample.id)}
+                >
+                  Add to Pack
+                </button>
                 <button
                   className="fav-btn"
                   onClick={() => toggleFavorite(sample.id)}

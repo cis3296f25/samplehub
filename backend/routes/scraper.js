@@ -145,6 +145,20 @@ router.delete("/favorites", async (req, res) => {
   }
 });
 
+// ADD TO PACK
+router.post("/pack_samples", async (req, res) => {
+  const { packId, sampleId } = req.body;
+  try {
+    await Pool.query(
+      "INSERT INTO pack_samples (pack_id, sample_id) VALUES ($1, $2)",
+      [packId, sampleId]
+    );
+    res.json({ message: "Added to pack"});
+  } catch (err) {
+    console.error("Error adding to pack:", err);
+    res.status(500).json({ error: "Failed to add to pack" });
+  }
+});
 
 
 
