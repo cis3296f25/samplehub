@@ -14,7 +14,7 @@ async function fetchSounds() {
 
   console.log(`Fetching sounds for keyword: ${randomkeyword}`);
 
-  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5`;
+  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5,duration,filesize`;
 
   try {
     const response = await fetch(searchUrl);
@@ -117,7 +117,7 @@ router.post("/favorites", async (req, res) => {
       "INSERT INTO favorites (user_id, sample_id) VALUES ($1, $2)",
       [userId, sampleId]
     );
-    res.json({ message: "Added to favorites"});
+    res.json({ message: "Added to Fav"});
   } catch (err) {
     console.error("Error adding to favorites:", err);
     res.status(500).json({ error: "Failed to add to favorites" });

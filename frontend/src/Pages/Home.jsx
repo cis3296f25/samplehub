@@ -11,15 +11,12 @@ export default function Home() {
   const [pack_samples, setPack] = useState([]);
 
   const userId = 1; //PLACEHOLDER FOR USER ID
-
-  useEffect(() => {
-    fetchSample();
-    fetchAddedPack();
-  }, []);
+  const packId = 1;
 
   useEffect(() => {
     fetchSample();
     fetchFavorites();
+    fetchAddedPack();
   }, []);
 
   // SAMPLE FETCHING FUNCTION
