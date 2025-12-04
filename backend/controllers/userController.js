@@ -58,4 +58,59 @@ const uploadSound = async (req, res) => {
   }
 };
 
-export { uploadSound };
+const getFavorites = async (req, res) => {
+  try {
+    const user = req.user;
+    const result = await pool.query(
+      "SELECT sample_id FROM favorites WHERE user_id = $1",
+      [user.id],
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching favorites:", err);
+    res.status(500).json({ error: "Failed to fetch favorites" });
+  }
+};
+
+const addToFavorites = async (req, res) => {
+  const { sampleId } = req.body;
+  const user = req.user;
+
+  if (!sampleId) {
+    return res.status(400).json({ error: "Missing sampleId" });
+  }
+
+  try {
+    await pool.query(
+      "INSERT INTO favorites (user_id, sample_id) VALUES ($1, $2) ON CONFLICT (user_id, sample_id) DO NOTHING",
+      [user.id, sampleId],
+    );
+    res.json({ message: "Added to favorites" });
+  } catch (err) {
+    console.error("Error adding to favorites:", err);
+    res.status(500).json({ error: "Failed to add to favorites" });
+  }
+};
+
+const removeFromFavorites = async (req, res) => {
+  const { sampleId } = req.query;
+  const user = req.user;
+
+  if (!sampleId) {
+    return res.status(400).json({ error: "Missing sampleId" });
+  }
+
+  try {
+    await pool.query(
+      "DELETE FROM favorites WHERE user_id = $1 AND sample_id = $2",
+      [user.id, sampleId],
+    );
+
+    res.json({ message: "Removed from favorites" });
+  } catch (err) {
+    console.error("Error removing favorite:", err);
+    res.status(500).json({ error: "Failed to remove favorite" });
+  }
+};
+
+export { uploadSound, getFavorites, addToFavorites, removeFromFavorites };

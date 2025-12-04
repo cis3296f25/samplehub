@@ -47,7 +47,5 @@ CREATE TABLE playlist(
   title VARCHAR(255) NOT NULL
 );
 
-CREATE INDEX idx_samples_genre ON samples(genre);
-CREATE INDEX idx_samples_textsearch ON samples USING GIN (to_tsvector('english', title || ' ' || genre));
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-CREATE INDEX idx_samples_title_trgm ON samples USING GIN (title gin_trgm_ops);
+CREATE INDEX samples_genre_idx ON samples(genre);
+CREATE INDEX samples_fts ON search_vector USING GIN (to_tsvector('english', title));

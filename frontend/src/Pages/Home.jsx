@@ -1,28 +1,98 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { auth } from "../Components/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || `/api`;
 
 export default function Home() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState("newest");
+
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageInput, setPageInput] = useState("");
 
   const [favorites, setFavorites] = useState([]);
-
-  const userId = 1; //PLACEHOLDER FOR USER ID
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetchSample();
-    fetchFavorites();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setIsLoggedIn(!!currentUser);
+      setUser(currentUser);
+      if (currentUser) {
+        fetchFavorites(currentUser);
+      } else {
+        setFavorites([]);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // SAMPLE FETCHING FUNCTION
-  const fetchSample = async () => {
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    const urlDuration = searchParams.get("duration") || "";
+    const urlOrder = searchParams.get("order") || "newest";
+    const page = parseInt(searchParams.get("page") || "1");
+
+    setSearchTerm(urlSearch);
+    setSelectedDuration(urlDuration);
+    setSelectedOrder(urlOrder);
+    fetchSamples(page, false);
+  }, [searchParams]);
+
+  const fetchFavorites = async (currentUser) => {
+    if (!currentUser) return;
+
+    try {
+      const token = await currentUser.getIdToken();
+      const response = await fetch(`${BASE_URL}/user/favorites`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFavorites(data.map((fav) => fav.sample_id));
+      }
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  const fetchSamples = async (page = 1, resetFilters = false) => {
     try {
       setLoading(true);
-      const response = await fetch("api/samples");
+      const params = new URLSearchParams();
+
+      if (!resetFilters) {
+        if (searchTerm) params.append("search", searchTerm);
+        if (selectedDuration) params.append("duration", selectedDuration);
+        if (selectedOrder) params.append("order", selectedOrder);
+      } else {
+        params.append("order", "newest");
+      }
+
+      params.append("page", page);
+
+      const response = await fetch(`${BASE_URL}/search?${params}`);
       const data = await response.json();
-      setSamples(data);
+
+      if (data.samples) {
+        setSamples(data.samples);
+        setTotalPages(data.pagination.totalPages);
+        setTotalCount(data.pagination.totalCount);
+      } else {
+        setSamples(data);
+      }
     } catch (error) {
       console.error("Error fetching samples:", error);
     } finally {
@@ -30,56 +100,115 @@ export default function Home() {
     }
   };
 
-  // FAVORITE FETCHING FUNCTION
-  const fetchFavorites = async () => {
-    try {
-      const response = await fetch(`/api/favorites/${userId}`);
-      const data = await response.json();
-      setFavorites(data.map((fav) => fav.sample_id));
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
+  const handleSearch = async (page = 1) => {
+    const newSearchParams = new URLSearchParams();
+    if (searchTerm) newSearchParams.set("search", searchTerm);
+    if (selectedDuration) newSearchParams.set("duration", selectedDuration);
+    newSearchParams.set("order", selectedOrder || "newest");
+    newSearchParams.set("page", page.toString());
+    setSearchParams(newSearchParams);
+    await fetchSamples(page, false);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("page", newPage.toString());
+      setSearchParams(newSearchParams);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  // SEARCH HANDLER
-  const handleSearch = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-
-      if (searchTerm) params.append("search", searchTerm);
-      if (selectedGenre) params.append("genre", selectedGenre);
-
-      const response = await fetch(`/api/samples/search?${params}`);
-      const data = await response.json();
-      setSamples(data);
-    } catch (error) {
-      console.error("Error searching samples:", error);
-    } finally {
-      setLoading(false);
+  const handlePageInputSubmit = (e) => {
+    e.preventDefault();
+    const pageNum = parseInt(pageInput);
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      handlePageChange(pageNum);
+      setPageInput("");
     }
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 6;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    if (currentPage <= 3) {
+      pages.push(1, 2, 3, 4, 5, "ellipsis", totalPages);
+      return pages;
+    }
+
+    if (currentPage >= totalPages - 2) {
+      pages.push(1, "ellipsis");
+      return pages.concat(
+        Array.from({ length: 5 }, (_, i) => totalPages - 4 + i),
+      );
+    }
+
+    pages.push(
+      1,
+      "ellipsis",
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      "ellipsis",
+      totalPages,
+    );
+    return pages;
   };
 
   const toggleFavorite = async (sampleId) => {
+    if (!isLoggedIn || !user) {
+      return;
+    }
+
     const isFavorited = favorites.includes(sampleId);
 
+    setFavorites((prev) =>
+      isFavorited ? prev.filter((id) => id !== sampleId) : [...prev, sampleId],
+    );
+
     try {
+      const token = await user.getIdToken();
+
       if (isFavorited) {
-        await fetch(`/api/favorites?userId=${userId}&sampleId=${sampleId}`, {
-          method: "DELETE",
+        const response = await fetch(
+          `${BASE_URL}/user/favorites?sampleId=${sampleId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (response.ok) {
+          setFavorites(favorites.filter((id) => id !== sampleId));
+        }
+      } else {
+        const response = await fetch(`${BASE_URL}/user/favorites`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ sampleId }),
         });
 
-        setFavorites(favorites.filter((id) => id !== sampleId));
-      } else {
-        await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, sampleId }),
-        });
-        setFavorites([...favorites, sampleId]);
+        if (response.ok) {
+          setFavorites([...favorites, sampleId]);
+        }
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      setFavorites((prev) =>
+        isFavorited
+          ? [...prev, sampleId]
+          : prev.filter((id) => id !== sampleId),
+      );
     }
   };
 
@@ -95,7 +224,7 @@ export default function Home() {
     const mb = (bytes / (1024 * 1024)).toFixed(2);
     return `${mb} MB`;
   };
-  // Force file download helper
+
   const downloadFile = (url, name) => {
     const a = document.createElement("a");
     a.href = url;
@@ -111,25 +240,19 @@ export default function Home() {
         Find, preview, and collect samples — all in one place.
       </h1>
 
-      {/* Search Controls */}
-      <div className="search-controls">
+      <form
+        className="search-controls"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+      >
         <input
           type="text"
           placeholder="Search samples..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSearch()}
         />
-
-        <select
-          value={selectedGenre}
-          onChange={(e) => setSelectedGenre(e.target.value)}
-        >
-          <option value="">Genre</option>
-          <option value="Hip-Hop">Hip-Hop</option>
-          <option value="EDM">EDM</option>
-          <option value="POP">Pop</option>
-        </select>
 
         <select
           value={selectedDuration}
@@ -141,12 +264,19 @@ export default function Home() {
           <option value="long">Long (&gt;30s)</option>
         </select>
 
-        <button className="search-btn" onClick={handleSearch}>
+        <select
+          value={selectedOrder}
+          onChange={(e) => setSelectedOrder(e.target.value)}
+        >
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+
+        <button type="submit" className="search-btn">
           Search
         </button>
-      </div>
+      </form>
 
-      {/* Sample List */}
       <div className="samples-list">
         {loading ? (
           <div className="loading">Loading samples...</div>
@@ -156,16 +286,25 @@ export default function Home() {
           samples.map((sample) => (
             <div key={sample.id} className="sample-card">
               <div className="sample-header">
-                <h3>{sample.title}</h3>
-                {sample.genre && (
-                  <span className="genre-tag">{sample.genre}</span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <h3>{sample.title}</h3>
+                  {sample.genre && (
+                    <span className="genre-tag">Genre: {sample.genre}</span>
+                  )}
+                </div>
+                {isLoggedIn && (
+                  <button
+                    className="fav-btn"
+                    onClick={() => toggleFavorite(sample.id)}
+                    title={
+                      favorites.includes(sample.id)
+                        ? "Remove from favorites"
+                        : "Add to favorites"
+                    }
+                  >
+                    {favorites.includes(sample.id) ? "❤️" : "🤍"}
+                  </button>
                 )}
-                <button
-                  className="fav-btn"
-                  onClick={() => toggleFavorite(sample.id)}
-                >
-                  {favorites.includes(sample.id) ? "❤️" : "🤍"}
-                </button>
               </div>
 
               <div className="sample-info">
@@ -185,6 +324,78 @@ export default function Home() {
           ))
         )}
       </div>
+
+      {!loading && samples.length > 0 && totalPages > 1 && (
+        <div className="pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <div className="pagination-numbers">
+            {getPageNumbers().map((page, index) => {
+              if (page === "ellipsis") {
+                return (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="pagination-ellipsis"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={page}
+                  className={`pagination-number ${
+                    page === currentPage ? "active" : ""
+                  }`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+
+          <div className="pagination-jump">
+            <form
+              onSubmit={handlePageInputSubmit}
+              className="pagination-jump-form"
+            >
+              <label htmlFor="page-input">Go to page:</label>
+              <input
+                id="page-input"
+                type="number"
+                min="1"
+                max={totalPages}
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                placeholder={currentPage.toString()}
+                className="pagination-input"
+              />
+              <button type="submit" className="pagination-jump-btn">
+                Go
+              </button>
+            </form>
+          </div>
+
+          <span className="pagination-info">
+            Page {currentPage} of {totalPages} ({totalCount} total samples)
+          </span>
+        </div>
+      )}
     </section>
   );
 }

@@ -6,7 +6,6 @@ import userRoutes from "./routes/user.js";
 import randomRoutes from "./routes/random.js";
 import searchRoutes from "./routes/search.js";
 import freesoundRoutes from "./routes/scraper.js";
-import { fetchSounds } from "./routes/scraper.js";
 
 dotenv.config();
 
@@ -25,9 +24,8 @@ app.use((req, res, next) => {
 app.use("/api/", freesoundRoutes);
 
 app.use("/api/user/", userRoutes);
-app.use("/api/search/", searchRoutes);
+app.use("/api/", searchRoutes);
 app.use("/api/", randomRoutes);
-app.use("/api/samples", fetchSounds);
 
 app.listen(PORT, () => {
   console.log(`Server is listening, running at http://localhost:${PORT}`);
