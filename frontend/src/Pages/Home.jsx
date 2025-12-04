@@ -19,8 +19,11 @@ export default function Home() {
   const [pageInput, setPageInput] = useState("");
 
   const [favorites, setFavorites] = useState([]);
+  const [pack_samples, setPack] = useState([]);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const packId = 1;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -119,6 +122,16 @@ export default function Home() {
     }
   };
 
+  const fetchAddedPack = async () => {
+    try {
+      const response = await fetch(`/api/sample_packs/${userId}`);
+      const data = await response.json();
+      setPack(data.map((pack) => pack.sample_id));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
   const handlePageInputSubmit = (e) => {
     e.preventDefault();
     const pageNum = parseInt(pageInput);
@@ -210,6 +223,17 @@ export default function Home() {
           : prev.filter((id) => id !== sampleId),
       );
     }
+  };
+
+  const addToPack = async (sampleId) => {
+    alert("adding the sample to the pack");
+    await fetch("/api/pack_samples", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ packId, sampleId }),
+    });
+
+    setPack([...pack_samples, sampleId]);
   };
 
   const formatDuration = (seconds) => {
@@ -305,6 +329,12 @@ export default function Home() {
                     {favorites.includes(sample.id) ? "❤️" : "🤍"}
                   </button>
                 )}
+                <button
+                  className="add-to-pack-btn"
+                  onClick={() => addToPack(sample.id)}
+                >
+                  Add to Pack
+                </button>
               </div>
 
               <div className="sample-info">

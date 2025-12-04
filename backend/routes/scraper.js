@@ -76,7 +76,7 @@ async function fetchSounds() {
 
   console.log(`Fetching sounds for keyword: ${randomkeyword}`);
 
-  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5`;
+  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5,duration,filesize`;
 
   try {
     const response = await fetch(searchUrl);
@@ -135,6 +135,21 @@ router.post("/fetch-100-samples", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ADD TO PACK
+router.post("/pack_samples", async (req, res) => {
+  const { packId, sampleId } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO pack_samples (pack_id, sample_id) VALUES ($1, $2)",
+      [packId, sampleId],
+    );
+    res.json({ message: "Added to pack" });
+  } catch (err) {
+    console.error("Error adding to pack:", err);
+    res.status(500).json({ error: "Failed to add to pack" });
   }
 });
 
