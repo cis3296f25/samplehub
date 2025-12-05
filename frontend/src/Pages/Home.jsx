@@ -254,10 +254,22 @@ export default function Home() {
   };
 
   return (
-    <section className="left-section">
+    
+    <section className="sample-discovery">
       <h1 className="main-title">
         Find, preview, and collect samples — all in one place.
       </h1>
+<<<<<<< HEAD
+<<<<<<< HEAD
+      <div className="search-controls">
+        <input 
+        type="text" placeholder="Search samples..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyPress={(e) => e.key === 'Enter' && handleSearch()} 
+=======
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
 
       <form
         className="search-controls"
@@ -271,6 +283,10 @@ export default function Home() {
           placeholder="Search samples..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+<<<<<<< HEAD
+>>>>>>> c2fd0386d949435574c944703a1375e3254ed21f
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
         />
 
         <select
@@ -302,11 +318,29 @@ export default function Home() {
         ) : samples.length === 0 ? (
           <div className="no-samples">No samples found.</div>
         ) : (
+<<<<<<< HEAD
+<<<<<<< HEAD
+          samples.map((sample) => (
+            <div key={sample.id} className={"sample-card " + sample.genre}>
+              <div className="sample-header">
+                <h3>{sample.title}</h3>
+                {sample.genre && (
+                  <span className="genre-tag">{sample.genre}</span>
+                )}
+                <button className="fav-btn" onClick={() => toggleFavorite(sample.id)}>{favorites.includes(sample.id) ? 'Favorite' : 'Not Favorite'}</button>
+              </div>
+=======
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
           <div className="dashboard-sample-list">
             {samples.map((sample) => (
               <div key={sample.id} className="dashboard-sample">
                 <div className="dashboard-sample-info">
                   <div className="dashboard-title">{sample.title}</div>
+<<<<<<< HEAD
+>>>>>>> c2fd0386d949435574c944703a1375e3254ed21f
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
 
                   <div className="dashboard-meta">
                     <span>Duration: {formatDuration(sample.duration)}</span>
@@ -352,6 +386,14 @@ export default function Home() {
           </div>
         )}
       </div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+      <div className="sample-info">
+        <h1>Here is where the full information for a sample can be found</h1>
+      </div>
+=======
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
 
       {!loading && samples.length > 0 && totalPages > 1 && (
         <div className="pagination">
@@ -433,6 +475,10 @@ export default function Home() {
         }}
         sampleId={selectedSampleForPack}
       />
+<<<<<<< HEAD
+>>>>>>> c2fd0386d949435574c944703a1375e3254ed21f
+=======
+>>>>>>> bcde755ac67b47d10643e3060282a1453e2717ec
     </section>
   );
 }

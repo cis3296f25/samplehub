@@ -39,7 +39,7 @@ export default function Login({ onLoginSuccess }) {
 
       <button type="submit">Login</button>
 
-      {err && <p className="error">{err}</p>}
+      {err && <p className="error">Invalid email or password</p>}
     </form>
   );
 }
