@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { auth } from "../Components/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import AddToPackModal from "../Components/AddToPackModal";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || `/api`;
 
@@ -19,11 +20,11 @@ export default function Home() {
   const [pageInput, setPageInput] = useState("");
 
   const [favorites, setFavorites] = useState([]);
-  const [pack_samples, setPack] = useState([]);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const packId = 1;
+  const [selectedSampleForPack, setSelectedSampleForPack] = useState(null);
+  const [showAddToPackModal, setShowAddToPackModal] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -122,16 +123,6 @@ export default function Home() {
     }
   };
 
-  const fetchAddedPack = async () => {
-    try {
-      const response = await fetch(`/api/sample_packs/${userId}`);
-      const data = await response.json();
-      setPack(data.map((pack) => pack.sample_id));
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
-    }
-  };
-
   const handlePageInputSubmit = (e) => {
     e.preventDefault();
     const pageNum = parseInt(pageInput);
@@ -225,15 +216,9 @@ export default function Home() {
     }
   };
 
-  const addToPack = async (sampleId) => {
-    alert("adding the sample to the pack");
-    await fetch("/api/pack_samples", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ packId, sampleId }),
-    });
-
-    setPack([...pack_samples, sampleId]);
+  const handleAddToPack = (sampleId) => {
+    setSelectedSampleForPack(sampleId);
+    setShowAddToPackModal(true);
   };
 
   const formatDuration = (seconds) => {
@@ -243,19 +228,29 @@ export default function Home() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const formatFileSize = (bytes) => {
-    if (!bytes) return "N/A";
-    const mb = (bytes / (1024 * 1024)).toFixed(2);
-    return `${mb} MB`;
-  };
+  const downloadFile = async (sampleId, name) => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${BASE_URL}/user/download/${sampleId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  const downloadFile = (url, name) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Error during file download:", error);
+    }
   };
 
   return (
@@ -307,51 +302,54 @@ export default function Home() {
         ) : samples.length === 0 ? (
           <div className="no-samples">No samples found.</div>
         ) : (
-          samples.map((sample) => (
-            <div key={sample.id} className="sample-card">
-              <div className="sample-header">
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <h3>{sample.title}</h3>
-                  {sample.genre && (
-                    <span className="genre-tag">Genre: {sample.genre}</span>
+          <div className="dashboard-sample-list">
+            {samples.map((sample) => (
+              <div key={sample.id} className="dashboard-sample">
+                <div className="dashboard-sample-info">
+                  <div className="dashboard-title">{sample.title}</div>
+
+                  <div className="dashboard-meta">
+                    <span>Duration: {formatDuration(sample.duration)}</span>
+                    {sample.genre && <span>Genre: {sample.genre}</span>}
+                  </div>
+
+                  {sample.preview_url && (
+                    <audio controls className="dashboard-audio">
+                      <source src={sample.preview_url} type="audio/mpeg" />
+                    </audio>
                   )}
                 </div>
+
                 {isLoggedIn && (
-                  <button
-                    className="fav-btn"
-                    onClick={() => toggleFavorite(sample.id)}
-                    title={
-                      favorites.includes(sample.id)
-                        ? "Remove from favorites"
-                        : "Add to favorites"
-                    }
-                  >
-                    {favorites.includes(sample.id) ? "❤️" : "🤍"}
-                  </button>
-                )}
-                <button
-                  className="add-to-pack-btn"
-                  onClick={() => addToPack(sample.id)}
-                >
-                  Add to Pack
-                </button>
-              </div>
+                  <>
+                    <button
+                      onClick={() => toggleFavorite(sample.id)}
+                      className="fav-btn"
+                    >
+                      {favorites.includes(sample.id) ? "❤️" : "🤍"}
+                    </button>
 
-              <div className="sample-info">
-                <span>Duration: {formatDuration(sample.duration)}</span>
-                {sample.file_size && (
-                  <span>Size: {formatFileSize(sample.file_size)}</span>
+                    <button
+                      className="add-to-pack-btn"
+                      onClick={() => handleAddToPack(sample.id)}
+                    >
+                      Add to Pack
+                    </button>
+
+                    <button
+                      className="add-to-pack-btn"
+                      onClick={async () => {
+                        if (!user) return;
+                        await downloadFile(sample.id, `${sample.title}.mp3`);
+                      }}
+                    >
+                      Download
+                    </button>
+                  </>
                 )}
               </div>
-
-              {sample.preview_url && (
-                <audio controls className="audio-player">
-                  <source src={sample.preview_url} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
-              )}
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
@@ -426,6 +424,15 @@ export default function Home() {
           </span>
         </div>
       )}
+
+      <AddToPackModal
+        isOpen={showAddToPackModal}
+        onClose={() => {
+          setShowAddToPackModal(false);
+          setSelectedSampleForPack(null);
+        }}
+        sampleId={selectedSampleForPack}
+      />
     </section>
   );
 }
