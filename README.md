@@ -2,6 +2,11 @@
 
 A web application for finding new loops and samples.
 
+<img width="1980" height="1020" alt="Image" src="https://github.com/user-attachments/assets/1ad4db44-cd9e-48fa-95f9-e7475b7d2f6d" />
+
+Live app: samplehub.jyyhuang.com
+
+
 # How to install
 
 Clone this repository and install the dependencies:
