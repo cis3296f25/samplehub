@@ -41,5 +41,11 @@ CREATE TABLE pack_samples (
     PRIMARY KEY (pack_id, sample_id)
 );
 
-CREATE INDEX idx_samples_genre ON samples(genre);
-CREATE INDEX idx_samples_textsearch ON samples USING GIN (to_tsvector('english', title || ' ' || genre));
+CREATE TABLE playlist(
+  id SERIAL PRIMARY KEY,
+  video_id VARCHAR(50) NOT NULL UNIQUE,
+  title VARCHAR(255) NOT NULL
+);
+
+CREATE INDEX samples_genre_idx ON samples(genre);
+CREATE INDEX samples_fts ON search_vector USING GIN (to_tsvector('english', title));

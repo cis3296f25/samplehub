@@ -1,12 +1,74 @@
 import fetch from "node-fetch";
 import express from "express";
-//DATABASE SETUP
-import Pool from "../db.js";
-
+import pool from "../db.js";
 
 const router = express.Router();
 const apiKey = process.env.FREESOUND_API_KEY;
-const baseUrl = "https://freesound.org/apiv2";
+const BASE_URL = "https://freesound.org/apiv2";
+
+async function insertSample(sound) {
+  if (sound.duration && sound.duration > 120) {
+    console.log("Skipped (too long):", sound.name);
+    return false;
+  }
+  const exists = await pool.query(
+    "SELECT 1 FROM samples WHERE source_url LIKE $1 LIMIT 1",
+    [`%${sound.id}%`],
+  );
+  if (exists.rows.length > 0) return false;
+
+  const cleanTitle = sound.name.replace(
+    /\.(wav|wave|aiff|aif|aifc|ogg|mp3|flac)$/i,
+    "",
+  );
+  const durationInSeconds = sound.duration ? Math.round(sound.duration) : null;
+
+  await pool.query(
+    `INSERT INTO samples 
+      (title, source, source_url, preview_url, genre, file_size, duration, license) 
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [
+      cleanTitle,
+      "FreeSound",
+      sound.url,
+      sound.previews?.["preview-hq-mp3"] ?? null,
+      sound.tags?.[0] ?? null,
+      sound.filesize ?? null,
+      durationInSeconds,
+      sound.license ?? null,
+    ],
+  );
+  console.log("Inserted:", sound.name);
+  return true;
+}
+
+export async function fetch100Samples() {
+  let totalInserted = 0;
+  let page = 1;
+  console.log("Fetching 100 Freesound samples...");
+
+  while (totalInserted < 100) {
+    const url = `${BASE_URL}/search/text/?query=&fields=id,name,url,previews,license,tags,filesize,duration&token=${apiKey}&page_size=30&page=${page}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!data.results || data.results.length === 0) {
+      console.log("No more results — stopping.");
+      break;
+    }
+
+    for (const sound of data.results) {
+      if (totalInserted >= 100) break;
+      const inserted = await insertSample(sound);
+      if (inserted) totalInserted++;
+    }
+
+    console.log(`Progress: ${totalInserted}/100`);
+    page++;
+  }
+
+  console.log("\nInserted", totalInserted, "samples.");
+}
 
 async function fetchSounds() {
   const keywords = ["rain", "ocean", "wind", "fire", "bell", "forest"];
@@ -14,19 +76,19 @@ async function fetchSounds() {
 
   console.log(`Fetching sounds for keyword: ${randomkeyword}`);
 
-  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5`;
+  const searchUrl = `https://freesound.org/apiv2/search/text/?query=${randomkeyword}&fields=id,name,url,previews,license,tags&token=${apiKey}&page_size=5,duration,filesize`;
 
   try {
     const response = await fetch(searchUrl);
     const data = await response.json();
 
     for (const sound of data.results) {
-      const existing = await Pool.query(
+      const existing = await pool.query(
         "SELECT * FROM samples WHERE source_url LIKE $1",
         [`%${sound.id}%`],
       );
       if (existing.rows.length === 0) {
-        await Pool.query(
+        await pool.query(
           `INSERT INTO samples 
                  (title, source, source_url, preview_url, genre, file_size, duration, license) 
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -56,75 +118,39 @@ export { fetchSounds };
 // ROUTE TO FETCH SAMPLES FROM DATABASE
 router.get("/samples", async (req, res) => {
   try {
-    const result = await Pool.query(
-      "SELECT * FROM samples ORDER BY created_at DESC"
+    const result = await pool.query(
+      "SELECT * FROM samples ORDER BY created_at DESC",
     );
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching samples:", err);
-    res.status(500).json({ error: "Failed to fetch samples"});
+    res.status(500).json({ error: "Failed to fetch samples" });
   }
-
 });
 
-router.get("/sound/:id", async (req, res) => {
-  const { id } = req.params;
+router.post("/fetch-100-samples", async (req, res) => {
   try {
-    const existing = await Pool.query(
-      "SELECT * FROM samples WHERE source_url LIKE $1",
-      [`%${id}%`],
-    );
-    if (existing.rows.length > 0) {
-      console.log("Sound found in Database");
-      return res.json({
-        ...existing.rows[0],
-        previews: { "preview-hq-mp3": existing.rows[0].preview_url },
-      });
-    }
-
-    const response = await fetch(`${baseUrl}/sounds/${id}/?token=${apiKey}`);
-    const data = await response.json();
-
-    await Pool.query(
-      `INSERT INTO samples 
-                 (title, source, source_url, preview_url, genre, file_size, duration, license) 
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [
-        data.name,
-        "FreeSound",
-        data.url,
-        data.previews["preview-hq-mp3"],
-        data.tags && data.tags.length > 0 ? data.tags[0] : null,
-        data.filesize,
-        data.duration,
-        data.license,
-      ],
-    );
-
-    console.log("Sound saved to Database");
-    res.json(data);
-  } catch (err) {
-    console.error("Error fetching sound: ", err);
-    res.status(500).json({ error: "Failed to fetch sound" });
+    const count = await fetch100Samples();
+    res.json({ success: true, inserted: count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// ADD TO favorites
-router.post("/favorites", async (req, res) => {
-  const { userId, sampleId } = req.body;
+// ADD TO PACK
+router.post("/pack_samples", async (req, res) => {
+  const { packId, sampleId } = req.body;
   try {
-    await Pool.query(
-      "INSERT INTO favorites (user_id, sample_id) VALUES ($1, $2)",
-      [userId, sampleId]
+    await pool.query(
+      "INSERT INTO pack_samples (pack_id, sample_id) VALUES ($1, $2)",
+      [packId, sampleId],
     );
-    res.json({ message: "Added to favorites"});
+    res.json({ message: "Added to pack" });
   } catch (err) {
-    console.error("Error adding to favorites:", err);
-    res.status(500).json({ error: "Failed to add to favorites" });
+    console.error("Error adding to pack:", err);
+    res.status(500).json({ error: "Failed to add to pack" });
   }
 });
-
-
-
 
 export default router;

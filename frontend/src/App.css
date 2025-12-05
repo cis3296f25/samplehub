@@ -1,5 +1,6 @@
-
-body, html, #root {
+body,
+html,
+#root {
   height: 100%;
   margin: 0;
   background: #0d0d0d;
@@ -7,20 +8,19 @@ body, html, #root {
   font-family: Inter, sans-serif;
 }
 
-
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
   background: #0d0d0d;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
 }
 
 .logo {
-  margin: 0;
+  margin-right: 3px;
   font-size: 1.5rem;
 }
 
@@ -38,12 +38,17 @@ body, html, #root {
   cursor: pointer;
   color: white;
   font-weight: 600;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1.5;
+  display: inline-block;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .nav-btn:hover {
   background: #e2335d;
 }
-
 
 .home-layout {
   display: grid;
@@ -52,13 +57,14 @@ body, html, #root {
   padding: 3rem 4rem;
 }
 
+.left-section {
+  margin: 2rem;
+}
 
-.sample-discovery .main-title {
-  align-items: center;
+.left-section .main-title {
   font-size: 2rem;
   margin-bottom: 2rem;
 }
-
 
 .search-controls {
   display: flex;
@@ -78,6 +84,8 @@ body, html, #root {
 
 .search-btn {
   background: #ff3b6a;
+  color: white;
+  font-weight: bold;
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 8px;
@@ -96,9 +104,17 @@ body, html, #root {
   background: #1a1a1a;
   border-radius: 8px;
 }
-
 .sample-info {
-  
+  display: flex;
+  flex-direction: column;
+}
+
+.right-section {
+  background: #111;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 350px;
+  margin: auto;
 }
 
 .signup-title {
@@ -165,7 +181,7 @@ body, html, #root {
   margin-top: 12px;
   background: transparent;
   border: none;
-  color: #ff4f79; /* same pink vibe as your Sign Up button */
+  color: #ff4f79;
   cursor: pointer;
   font-size: 0.9rem;
   text-align: left;
@@ -177,13 +193,159 @@ body, html, #root {
   opacity: 0.8;
 }
 
-.hip-hop {
-  background-color: rgba(255, 162, 0, 0.5);
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding: 1rem 0;
 }
 
-.edm {
-  background-color: rgba(0, 255, 0, 0.5);
+.pagination-btn {
+  background: #ff3b6a;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
-.pop {
-  background-color: rgba(255, 97, 160, 0.5)
+
+.pagination-btn:hover:not(:disabled) {
+  background: #e2335d;
+  transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+  background: #444;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-number {
+  background: #333;
+  border: 1px solid #555;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  min-width: 2.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.pagination-number:hover {
+  background: #444;
+  border-color: #ff3b6a;
+}
+
+.pagination-number.active {
+  background: #ff3b6a;
+  border-color: #ff3b6a;
+  font-weight: 700;
+}
+
+.pagination-ellipsis {
+  color: #aaa;
+  padding: 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.pagination-jump {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-jump-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-jump-form label {
+  color: #aaa;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.pagination-input {
+  background: #333;
+  border: 1px solid #555;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+  width: 4rem;
+  text-align: center;
+}
+
+.pagination-input:focus {
+  outline: none;
+  border-color: #ff3b6a;
+}
+
+.pagination-jump-btn {
+  background: #ff3b6a;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pagination-jump-btn:hover:not(:disabled) {
+  background: #e2335d;
+  transform: scale(1.05);
+}
+
+.pagination-info {
+  color: #aaa;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
+.no-samples {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
+.add-to-pack-btn {
+  margin-top: 10px;
+}
+
+h2 {
+  color: #ff3b6a;
+}
+
+.fav-btn {
+  background: transparent;
+  border: none;
+  color: #ff3b6a;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 20px;
 }
