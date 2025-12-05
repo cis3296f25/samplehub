@@ -49,10 +49,7 @@ export default function Layout() {
         />
       )}
 
-      <footer className="footer">
-        © 2025 SampleHub • Team Joey | Shiven | Arwin | Joshua
-      </footer>
+      <footer className="footer">© 2025 SampleHub</footer>
     </div>
   );
 }
-
