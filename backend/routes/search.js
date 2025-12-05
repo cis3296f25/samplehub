@@ -1,8 +1,8 @@
 import express from "express";
-import { getNewestFirst } from "../controllers/searchController.js";
+import { searchSamples } from "../controllers/searchController.js";
 
 const router = express.Router();
 
-router.get("/", getNewestFirst);
+router.get("/search", searchSamples);
 
 export default router;

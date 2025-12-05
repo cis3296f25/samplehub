@@ -20,7 +20,7 @@ html,
 }
 
 .logo {
-  margin: 0;
+  margin-right: 3px;
   font-size: 1.5rem;
 }
 
@@ -84,6 +84,8 @@ html,
 
 .search-btn {
   background: #ff3b6a;
+  color: white;
+  font-weight: bold;
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 8px;
@@ -101,6 +103,10 @@ html,
   padding: 0.8rem;
   background: #1a1a1a;
   border-radius: 8px;
+}
+.sample-info {
+  display: flex;
+  flex-direction: column;
 }
 
 .right-section {
@@ -187,47 +193,159 @@ html,
   opacity: 0.8;
 }
 
-/* Card Styles */
-.sample-card {
-  background: black;
-  color: #f2f3f5;
-  padding: 16px;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  margin-bottom: 18px;
-  width: 100%;
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding: 1rem 0;
 }
 
-.sample-header {
+.pagination-btn {
+  background: #ff3b6a;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #e2335d;
+  transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+  background: #444;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-numbers {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 0.5rem;
 }
 
-.sample-header h3 {
-  font-size: 1.1rem;
-  margin: 0;
+.pagination-number {
+  background: #333;
+  border: 1px solid #555;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  min-width: 2.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.pagination-number:hover {
+  background: #444;
+  border-color: #ff3b6a;
+}
+
+.pagination-number.active {
+  background: #ff3b6a;
+  border-color: #ff3b6a;
+  font-weight: 700;
+}
+
+.pagination-ellipsis {
+  color: #aaa;
+  padding: 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.pagination-jump {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-jump-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-jump-form label {
+  color: #aaa;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.pagination-input {
+  background: #333;
+  border: 1px solid #555;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+  width: 4rem;
+  text-align: center;
+}
+
+.pagination-input:focus {
+  outline: none;
+  border-color: #ff3b6a;
+}
+
+.pagination-jump-btn {
+  background: #ff3b6a;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
   font-weight: 600;
-  color: #ffffff;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pagination-jump-btn:hover:not(:disabled) {
+  background: #e2335d;
+  transform: scale(1.05);
+}
+
+.pagination-info {
+  color: #aaa;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
+.no-samples {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
+.add-to-pack-btn {
+  margin-top: 10px;
+}
+
+h2 {
+  color: #ff3b6a;
 }
 
 .fav-btn {
   background: transparent;
   border: none;
-  font-size: 1.8rem; /* bigger heart */
+  color: #ff3b6a;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
   cursor: pointer;
-  padding: 2px 6px;
-  line-height: 1;
-}
-
-.fav-btn:hover {
-  transform: scale(1.12);
-}
-
-.audio-player {
-  width: 100%;
-  margin: 10px 0;
-  border-radius: 8px;
+  font-size: 20px;
 }
