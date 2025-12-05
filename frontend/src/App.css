@@ -193,51 +193,6 @@ html,
   opacity: 0.8;
 }
 
-/* Card Styles */
-.sample-card {
-  background: black;
-  color: #f2f3f5;
-  padding: 16px;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  margin-bottom: 18px;
-  width: 100%;
-}
-
-.sample-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.sample-header h3 {
-  font-size: 1.1rem;
-  margin: 0;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.fav-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.8rem; /* bigger heart */
-  cursor: pointer;
-  padding: 2px 6px;
-  line-height: 1;
-}
-
-.fav-btn:hover {
-  transform: scale(1.12);
-}
-
-.audio-player {
-  width: 100%;
-  margin: 10px 0;
-  border-radius: 8px;
-}
-
 .pagination {
   display: flex;
   flex-wrap: wrap;
@@ -375,4 +330,22 @@ html,
   text-align: center;
   padding: 2rem;
   color: #aaa;
+}
+
+.add-to-pack-btn {
+  margin-top: 10px;
+}
+
+h2 {
+  color: #ff3b6a;
+}
+
+.fav-btn {
+  background: transparent;
+  border: none;
+  color: #ff3b6a;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 20px;
 }
